@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResQNet – Offline Emergency Response Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!--TOPNAV (shared, injected per page via JS)-->
+
+<!--PAGE: HOME-->
+<div class="page active" id="home">
+  <nav class="topnav">
+    <div class="logo-wrap" onclick="navigate('home')">
+      <div class="logo-shield">🛡️</div>
+      <div><div class="logo-text">ResQNet</div><div class="logo-tag">When networks fall, we don't</div></div>
+    </div>
+    <div class="nav-pills">
+      <div class="npill"><div class="nd pulse-dot"></div>Offline Nodes Connected: <strong>18</strong></div>
+      <div class="npill"><div class="nd ng pulse-dot"></div>People Connected: <strong>42</strong></div>
+      <div class="npill">💬 Local Chat</div>
+    </div>
+    <div class="nav-r">
+      <div class="nav-ibtn">♡ ints</div>
+      <div class="nav-ibtn">⚙ Settings</div>
+      <div class="nav-av">N</div>
+    </div>
+  </nav>
+  <div class="page-body" style="overflow-y:auto;">
+    <!-- Header -->
+    <div class="home-header">
+      <div>
+        <h1>Offline Emergency Response Network</h1>
+        <div class="sub">Help, even without the internet</div>
+      </div>
+      <div class="home-header-right">
+        <div class="map-badge" style="cursor:pointer" onclick="navigate('maps')">
+          <div class="dot"></div> Offline Maps Connected
+        </div>
+        <div class="map-badge">
+          <div class="dot"></div> Safe Zone &nbsp;·&nbsp;
+          <span style="color:var(--orange)">⚠</span> Danger Zone
+        </div>
+        <button class="btn btn-orange" onclick="navigate('maps')">📍 Plan Route</button>
+      </div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="home-main">
+      <!-- SOS -->
+      <div class="sos-panel">
+        <button class="sos-btn" onclick="navigate('sos')">⚠ EMERGENCY SOS</button>
+        <div class="sos-desc">Instantly trigger an emergency alert with SMS &amp; call actions, broadcast alerts, and shared checklist.</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#ff5252;box-shadow:0 0 6px #ff5252;" class="pulse-dot"></div>
+          <span style="font-size:11px;color:rgba(255,180,180,0.7)">Ready to broadcast to 42 devices</span>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-widget">
+        <canvas class="map-canvas" id="homeMapCanvas"></canvas>
+        <div class="map-legend">
+          <div class="map-legend-item"><span style="color:var(--green)">🛡</span> Safe Zone</div>
+          <div class="map-legend-item"><span style="color:var(--orange)">⚠</span> Danger Zone</div>
+          <div class="map-legend-item"><span style="color:#4fc3f7">📍</span> Pinned Location</div>
+        </div>
+        <div class="map-overlay-btns">
+          <button class="btn btn-green btn-sm" onclick="navigate('maps')">🛡 Safe Zone</button>
+          <button class="btn btn-orange btn-sm" onclick="navigate('maps')">⚠ Danger Zone</button>
+          <button class="btn btn-cyan btn-sm" onclick="navigate('maps')">📍 Plan Route</button>
+        </div>
+      </div>
+
+      <!-- Right AI mini -->
+      <div class="home-right">
+        <div class="card ai-mini-card">
+          <h3 style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;">OFFLINE AI ASSISTANT</h3>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;">Get answers to common emergency questions &amp; instant quick calculations — fully offline!</div>
+          <input class="ai-input" placeholder="Type your question..." id="homeAiInput">
+          <div class="ai-quick-btns">
+            <div class="ai-qbtn" onclick="navigate('ai')">Fuel Estimates</div>
+            <div class="ai-qbtn" onclick="navigate('ai')">First Aid</div>
+            <div class="ai-qbtn" onclick="navigate('ai')">Disaster Response</div>
+            <div class="ai-qbtn" onclick="navigate('ai')">Distribution Calc</div>
+          </div>
+          <div class="ai-input-row">
+            <input class="ai-input" placeholder="Type a message..." id="homeAiMsg">
+            <button class="btn btn-cyan btn-sm" onclick="navigate('ai')">Ask</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom feature tiles -->
+    <div class="home-features">
+      <!-- Doc & File -->
+      <div class="feat-tile" onclick="navigate('docs')">
+        <div class="feat-tile-icon">📁</div>
+        <div class="feat-tile-title">Document &amp; File Manager</div>
+        <div class="feat-tile-desc">Access PDF, DOCs, &amp; images offline. Share files locally, and edit emergency checklists.</div>
+        <div class="feat-tile-files">
+          <div class="feat-file-row">📄 Rescue SOP.doc <span style="margin-left:auto;color:var(--cyan2)">›</span></div>
+          <div class="feat-file-row">🖼️ First Aid Kit.jpg <span style="margin-left:auto;color:var(--cyan2)">›</span></div>
+        </div>
+        <div class="feat-tile-link">📡 Local File Sharing ›</div>
+      </div>
+      <!-- Translation -->
+      <div class="feat-tile translate-tile">
+        <div class="feat-tile-icon">🌐</div>
+        <div class="feat-tile-title">Offline Live Translation</div>
+        <div class="feat-tile-desc">Translate messages in real time across languages without internet.</div>
+        <div class="trans-demo">
+          Please help, we need medical assistance urgently!
+          <div class="trans-result">कृपया मदद करें, हमें तुरंत चिकित्सा सहायता चाहिए!</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;">
+          <span style="font-size:16px">🇺🇸</span><span style="font-size:16px">🇮🇳</span><span style="font-size:16px">🇧🇩</span><span style="font-size:16px">🇸🇦</span><span style="font-size:16px">🇫🇷</span><span style="font-size:16px">🇩🇪</span>
+        </div>
+      </div>
+      <!-- AI -->
+      <div class="feat-tile" onclick="navigate('ai')">
+        <div class="feat-tile-icon">🤖</div>
+        <div class="feat-tile-title">Offline AI Assistant</div>
+        <div class="feat-tile-desc">Guide, Estimate, Calculate; Offline Q&amp;A &amp; quick calculations.</div>
+        <div style="margin-top:10px;background:rgba(5,14,36,0.8);border:1px solid var(--border);border-radius:7px;padding:9px;">
+          <div style="font-size:12px;color:var(--cyan2);margin-bottom:5px;cursor:pointer;" onclick="navigate('ai')">How to perform CPR on a person in shock? ›</div>
+          <div style="font-size:11px;color:var(--text3);font-style:italic;">छाती पर 30 बार दबाव डालें, फिर 2 सांस दें...</div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:6px;">
+          <button class="btn btn-cyan btn-sm" style="flex:1;" onclick="navigate('ai')">Ask</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="home-stats">
+      <div class="stat-card" style="border-color:rgba(230,60,60,0.3);">
+        <div class="stat-icon">⚠️</div>
+        <div><div class="stat-val" style="color:#ff5252;">9</div><div class="stat-label">Emergency Alerts</div><div class="stat-sub">Responded Nearby</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div><div class="stat-val">26</div><div class="stat-label">Guide, Estimate, Calculate</div><div class="stat-sub">Questions Answered</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📁</div>
+        <div><div class="stat-val">15</div><div class="stat-label">Files Accessible</div><div class="stat-sub">Documents</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌐</div>
+        <div><div class="stat-val">6</div><div class="stat-label">Languages Translated</div><div class="stat-sub">5 Supported</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--PAGE: SOS-->
+<div class="page" id="sos">
+  <nav class="topnav">
+    <div class="logo-wrap" onclick="navigate('home')">
+      <div class="logo-shield">🛡️</div>
+      <div><div class="logo-text">ResQNet</div><div class="logo-tag">When networks fall, we don't</div></div>
+    </div>
+    <div class="nav-pills">
+      <div class="npill"><div class="nd pulse-dot"></div>Offline Nodes Connected: <strong>18</strong></div>
+      <div class="npill"><div class="nd ng pulse-dot"></div>People Connected: <strong>42</strong></div>
+      <div class="npill">💬 Local Chat</div>
+    </div>
+    <div class="nav-r">
+      <div class="nav-ibtn">♡ hirs</div>
+      <div class="nav-ibtn">⚙ Settings</div>
+      <div class="nav-av">N</div>
+    </div>
+  </nav>
+  <div class="page-body" style="overflow-y:auto;">
+    <!--SOS Header-->
+    <div class="sos-header">
+      <div class="sos-header-icon">⚠️</div>
+      <div>
+        <h1>SOS EMERGENCY ALERT</h1>
+        <div class="sub">Emergency broadcast sent to all connected devices!</div>
+      </div>
+      <div class="sos-countdown">
+        <div>
+          <div class="num" id="sosTimer">5</div>
+          <div class="lbl">seconds</div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,180,180,0.7);max-width:120px;">Countdown allows time to cancel any actions.</div>
+      </div>
+    </div>
+
+    <!--SOS Grid-->
+    <div class="sos-grid">
+      <!-- SMS & Call -->
+      <div class="sms-card">
+        <h3><span style="font-size:20px">📱</span> Emergency SMS &amp; Call</h3>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Pre-written SMS &amp; emergency call being triggered.</div>
+        <div class="sms-msg">
+          SOS! Emergency at Near City Hospital – Sector 16. GPS: Lat 28.61, Lon 77.20. Please assist urgently! Reference: resqnet.app/xa9227
+        </div>
+        <button class="call-btn">📞 Emergency Call +91 XXXXX XXXXX</button>
+        <div class="check-row">SMS sent to connected devices</div>
+        <div class="check-row">Calling emergency contacts…</div>
+      </div>
+
+      <!-- Map -->
+      <div>
+        <div class="map-sos">
+          <canvas class="map-canvas-sos" id="sosMapCanvas"></canvas>
+        </div>
+        <div style="margin-top:12px;" class="sos-cl-card" id="sos-cl-center">
+          <h3 style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:7px;"><span style="font-size:18px">📋</span> Emergency Checklist</h3>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Follow these steps until help arrives.</div>
+          <div class="check-row">SMS got delivered successfully</div>
+          <div class="check-row">Local network updated with SOS alert</div>
+        </div>
+      </div>
+
+      <!-- Location & Checklist -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="sos-cl-card">
+          <h3 style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:7px;"><span style="font-size:18px;color:var(--green)">📍</span> Location Shared</h3>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Current GPS coordinates: logged<br><strong style="color:#fff;">Lat 28.61, Lon 77.20</strong></div>
+          <div class="check-row">Location broadcast to all connected</div>
+          <div class="check-row">Local network updated with SOS alert</div>
+        </div>
+        <div class="sos-cl-card">
+          <h3 style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:7px;"><span style="font-size:18px">📋</span> Emergency Checklist</h3>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Follow these steps until help arrives.</div>
+          <div class="sos-cl-item"><div class="ck">✓</div> Assess the situation and stay calm.</div>
+          <div class="sos-cl-item"><div class="ck">✓</div> Check for injuries &amp; provide basic first aid.</div>
+          <div class="sos-cl-item"><div class="ck">✓</div> Secure the area &amp; prevent further harm.</div>
+          <div class="sos-cl-item"><div class="ck">✓</div> Communicate the situation to responders.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel row -->
+    <div class="cancel-row">
+      <button class="btn btn-red" style="font-size:15px;padding:13px 32px;font-family:'Orbitron',sans-serif;letter-spacing:1.5px;" onclick="cancelSOS()">⚠ CANCEL ALERT</button>
+      <div class="offline-badge">Actions triggered <strong>in offline mode</strong> — No internet needed</div>
+      <button class="btn btn-cyan" onclick="navigate('home')">← Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<!--PAGE: MAPS-->
+<div class="page" id="maps">
+  <nav class="topnav">
+    <div class="logo-wrap" onclick="navigate('home')">
+      <div class="logo-shield">🛡️</div>
+      <div><div class="logo-text">ResQNet</div><div class="logo-tag">When networks fall, we don't</div></div>
+    </div>
+    <div class="nav-pills">
+      <div class="npill"><div class="nd pulse-dot"></div>Offline Nodes Connected: <strong>18</strong></div>
+      <div class="npill"><div class="nd ng pulse-dot"></div>People Connected: <strong>42</strong></div>
+      <div class="npill">💬 Local Chat</div>
+    </div>
+    <div class="nav-r">
+      <div class="nav-ibtn">○ Nrs</div>
+      <div class="nav-ibtn">⚙ Settings</div>
+      <div class="nav-av">N</div>
+    </div>
+  </nav>
+  <div class="page-body" style="display:flex;flex-direction:column;padding:0;">
+    <div class="maps-header">
+      <h1><span>Offline</span> Maps</h1>
+      <div class="sub">Navigate and plan routes even in disaster-hit areas — offline. Pre-downloaded offline maps of your area. Mark locations, <strong>save danger zones, safe areas</strong>, and <strong>plan routes</strong> to navigate even without internet.</div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:260px 1fr 230px;overflow:hidden;">
+      <!-- Left -->
+      <div class="maps-left">
+        <div class="map-search">
+          <span style="color:var(--text3);font-size:13px;">🔍</span>
+          <input placeholder="Search Location…" id="mapSearchInput">
+        </div>
+        <div style="font-size:11px;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:5px;">📍 Saved Locations</div>
+        <div class="loc-list">
+          <div class="loc-item"><div class="loc-icon red">🏥</div><div><div class="loc-name">City Hospital</div><div class="loc-meta">Pinned Location · 12 mins ago</div></div></div>
+          <div class="loc-item"><div class="loc-icon green">🛡️</div><div><div class="loc-name">Disaster Shelter</div><div class="loc-meta">Safe Zone · 5 min ago</div></div></div>
+          <div class="loc-item"><div class="loc-icon orange">⚠️</div><div><div class="loc-name">Gas Leak Site</div><div class="loc-meta">Danger Zone · 17 min ago</div></div></div>
+          <div class="loc-item"><div class="loc-icon orange">⚠️</div><div><div class="loc-name">Ganga Nagar Market</div><div class="loc-meta">Danger Zone · 31 mins ago</div></div></div>
+          <div class="loc-item"><div class="loc-icon green">🛡️</div><div><div class="loc-name">Hope Elementary School</div><div class="loc-meta">Safe Zone · Yesterday</div></div></div>
+        </div>
+        <button class="btn btn-cyan btn-block" onclick="showModal('addLocModal')">+ Add Location</button>
+      </div>
+      <!-- Map Canvas -->
+      <div style="position:relative;">
+        <canvas id="mapsCanvas" style="width:100%;height:100%;display:block;"></canvas>
+        <div class="map-action-btns">
+          <button class="btn btn-green btn-sm" onclick="showModal('szModal')">🛡 Safe Zone</button>
+          <button class="btn btn-orange btn-sm" onclick="showModal('dzModal')">⚠ Danger Zone</button>
+          <button class="btn btn-cyan btn-sm" onclick="showModal('routeModal')">📍 Plan Route</button>
+        </div>
+        <div class="map-info-bar">
+          <span>📍 <strong>Save Locations</strong></span>
+          <span>⚠ <strong>Mark Danger Zones &amp; Safe Zones</strong></span>
+          <span>◇ <strong>Plan Routes</strong></span>
+          <span style="margin-left:auto;color:var(--cyan)">🔵 Map data downloaded for offline use — Keep your maps updated</span>
+        </div>
+      </div>
+      <!-- Right -->
+      <div class="maps-right">
+        <div class="sec-title">Map Legend</div>
+        <div class="legend-card">
+          <div class="legend-item"><div class="legend-ic">🛡️</div><div><div class="legend-name" style="color:var(--green)">Safe Zone</div><div class="legend-sub">Checkn min</div></div></div>
+          <div class="legend-item"><div class="legend-ic">⚠️</div><div><div class="legend-name" style="color:var(--orange)">Danger Zone</div><div class="legend-sub">Cheoze min</div></div></div>
+          <div class="legend-item"><div class="legend-ic">📍</div><div><div class="legend-name" style="color:var(--cyan2)">Pinned Location</div><div class="legend-sub">Checkpoint, 3 min</div></div></div>
+        </div>
+        <div class="offline-data-card">
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">☁️ Offline Map Data <span style="color:var(--cyan)">15 MB</span></div>
+          <div class="odc-row">☁️ Downloaded Maps — Last Updated: <span class="green">Just now</span></div>
+          <div class="odc-row"><span class="green">✓</span> Navigation available offline</div>
+        </div>
+        <button class="btn btn-cyan btn-block" onclick="showModal('updateModal')">+ Update Maps</button>
+        <button class="btn btn-cyan btn-block" style="margin-top:4px;background:rgba(0,80,180,0.1);" onclick="navigate('home')">← Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--PAGE: AI ASSISTANT-->
+<div class="page" id="ai">
+  <nav class="topnav">
+    <div class="logo-wrap" onclick="navigate('home')">
+      <div class="logo-shield">🛡️</div>
+      <div><div class="logo-text">ResQNet</div><div class="logo-tag">When networks fall, we don't</div></div>
+    </div>
+    <div class="nav-pills">
+      <div class="npill"><div class="nd pulse-dot"></div>Offline Nodes Connected: <strong>18</strong></div>
+      <div class="npill"><div class="nd ng pulse-dot"></div>People Connected: <strong>42</strong></div>
+      <div class="npill">💬 Local Chat</div>
+    </div>
+    <div class="nav-r">
+      <div class="nav-ibtn">○ Nrs</div>
+      <div class="nav-ibtn">⚙ Settings</div>
+      <div class="nav-av">N</div>
+    </div>
+  </nav>
+  <div class="page-body" style="display:flex;flex-direction:column;overflow:hidden;">
+    <div class="ai-page-header">
+      <h1>Offline AI Assistant <span>Get help with emergency Q&amp;A, quick calculations &amp; notes—all fully offline</span></h1>
+      <div class="ai-powered">Powered by pre-loaded decision trees and rule-based logic bringing the utility of AI into offline environments</div>
+    </div>
+    <div class="ai-layout" style="flex:1;overflow:hidden;">
+      <!-- Left -->
+      <div class="ai-left">
+        <div style="background:rgba(5,14,36,0.8);border:1px solid var(--border);border-radius:12px;padding:12px;width:100%;display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#1a3a80,#050f30);border:1px solid rgba(0,180,255,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;">🤖</div>
+          <div><div class="ai-name" style="font-size:13px;">Offline AI</div><div class="ai-status">Offline AI Assistant</div></div>
+          <div style="margin-left:auto;font-size:18px;cursor:pointer;">⊞</div>
+        </div>
+        <div class="ai-avatar">🤖</div>
+        <input class="ai-input-big" placeholder="Type your question…" id="aiPageInput">
+        <button class="ask-btn" onclick="sendAiQuestion()">ASK</button>
+        <div class="ai-shortcut-row">
+          <div class="ai-sc" onclick="askQuestion('Fuel Estimates')">⛽ Fuel Estimates · First Aid</div>
+          <div class="ai-sc" onclick="askQuestion('Distribution Calc')">📊 Distribution Calc</div>
+        </div>
+      </div>
+      <!-- Center -->
+      <div class="ai-center">
+        <div class="ai-help-row">
+          <div class="ai-help-lbl">Our <strong>Offline AI Assistant</strong> can help with:</div>
+        </div>
+        <div class="ai-tab-row">
+          <button class="ai-tab active" onclick="setAiTab(this,'qa')">🔀 Emergency Q&amp;A</button>
+          <button class="ai-tab" onclick="setAiTab(this,'calc')">📱 Quick Calculations</button>
+          <button class="ai-tab" onclick="setAiTab(this,'notes')">✏️</button>
+        </div>
+        <div class="ai-chat" id="aiChat">
+          <div style="font-size:12.5px;color:var(--text2);">How can I assist you today?</div>
+          <div class="chat-prompt">
+            <div class="chat-prompt-q">💠 How do I respond to a severe bleeding injury?</div>
+            <ul style="font-size:12.5px;color:var(--text2);padding-left:16px;">
+              <li>Apply firm pressure with a clean cloth,</li>
+              <li>Elevate the injured limb,</li>
+              <li>Apply bandage,</li>
+              <li>Monitor.</li>
+            </ul>
+          </div>
+          <div class="chat-follow" onclick="navigate('ai')">Need more help with first aid?</div>
+          <div class="chat-response">
+            <div class="chat-prompt-q" style="font-size:12px;">👤 What are safe evacuation spots here?</div>
+            <div style="font-size:12.5px;color:var(--text2);">Local known shelters or open areas like parks or large clearings are safe evacuation spots. Be ready to pin &amp; save your favorite locations!</div>
+            <div style="margin-top:8px;">
+              <div class="chat-loc-row"><div class="chat-loc-dot"></div> Ganga Nagar Market <span style="margin-left:auto;color:var(--text3)">4 mins ago</span></div>
+              <div class="chat-loc-row"><div class="chat-loc-dot"></div> Hope School <span style="margin-left:auto;color:var(--text3)">Yesterday</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;">
+          <input class="ai-input" placeholder="Type your question…" id="aiChatInput" style="flex:1;" onkeydown="if(event.key==='Enter')sendChatMsg()">
+          <button class="btn btn-cyan btn-sm" onclick="sendChatMsg()">Send</button>
+        </div>
+      </div>
+      <!-- Right -->
+      <div class="ai-right">
+        <div class="sec-title">Questions &amp; Notes</div>
+        <div class="qnotes-card">
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(0,120,255,0.15);border:1px solid rgba(0,160,255,0.28);">💬</div>
+            <div class="qni-text">How do I respond to severe bleeding injury?</div>
+            <div class="qni-plus">+</div>
+          </div>
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(230,60,60,0.15);border:1px solid rgba(230,60,60,0.28);">⚠️</div>
+            <div class="qni-text"><strong>Ganga Nagar Market</strong>Gas leak 4 min ago</div>
+            <div class="qni-plus">+</div>
+          </div>
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(230,60,60,0.15);border:1px solid rgba(230,60,60,0.28);">🏥</div>
+            <div class="qni-text"><strong>City Hospital</strong>Emergency 2 min ago</div>
+            <div class="qni-plus">+</div>
+          </div>
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(0,80,180,0.15);border:1px solid var(--border);">📋</div>
+            <div class="qni-text">Note: Distribute load based on weight &amp; need</div>
+          </div>
+          <button class="take-note-btn" onclick="showModal('noteModal')">✏️ Take New Note ›</button>
+        </div>
+        <div class="sec-title" style="margin-top:4px;">Questions &amp; Notes</div>
+        <div class="qnotes-card">
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(0,80,180,0.15);border:1px solid var(--border);font-size:11px;">⛽</div>
+            <div class="qni-text"><strong>Fuel Estimates</strong><span style="color:var(--text3);font-size:11px;">4 mins ago</span></div>
+            <span style="color:var(--cyan2);">›</span>
+          </div>
+          <div class="qnotes-item">
+            <div class="qni-icon" style="background:rgba(0,80,180,0.15);border:1px solid var(--border);font-size:11px;">📊</div>
+            <div class="qni-text"><strong>Distribution Calc</strong><span style="color:var(--text3);font-size:11px;">22 mins ago</span></div>
+            <span style="color:var(--cyan2);">›</span>
+          </div>
+          <button class="take-note-btn" onclick="showModal('noteModal')">✅ Take New Note</button>
+        </div>
+        <button class="btn btn-cyan btn-block" style="margin-top:4px;background:rgba(0,80,180,0.1);" onclick="navigate('home')">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--PAGE: DOCS-->
+<div class="page" id="docs">
+  <nav class="topnav">
+    <div class="logo-wrap" onclick="navigate('home')">
+      <div class="logo-shield">🛡️</div>
+      <div><div class="logo-text">ResQNet</div><div class="logo-tag">When networks fall, we don't</div></div>
+    </div>
+    <div class="nav-pills">
+      <div class="npill"><div class="nd pulse-dot"></div>Offline Nodes Connected: <strong>18</strong></div>
+      <div class="npill"><div class="nd ng pulse-dot"></div>People Connected: <strong>42</strong></div>
+      <div class="npill">💬 Local Chat</div>
+    </div>
+    <div class="nav-r">
+      <div class="nav-ibtn">○ Nrs</div>
+      <div class="nav-ibtn">⚙ Settings</div>
+      <div class="nav-av">N</div>
+    </div>
+  </nav>
+  <div class="page-body" style="display:flex;overflow:hidden;">
+    <!-- Sidebar -->
+    <div class="docs-sidebar">
+      <div class="docs-sb-item" onclick="navigate('docs')"><span class="sbi">📁</span> Documents &amp; Files</div>
+      <div class="docs-sb-item" onclick="navigate('docs')"><span class="sbi">🔄</span> Translation Module</div>
+      <div class="docs-sb-item" onclick="navigate('docs')"><span class="sbi">📡</span> File Sharing</div>
+      <div class="docs-sb-item active"><span class="sbi">📂</span> Documents &amp;<br>&nbsp;&nbsp;&nbsp;&nbsp; File Manager</div>
+      <div class="docs-sb-item" onclick="navigate('docs')"><span class="sbi">📋</span> Emergency<br>&nbsp;&nbsp;&nbsp;&nbsp; Procedures</div>
+      <div class="docs-sb-item" onclick="navigate('docs')"><span class="sbi">📝</span> Offline Notes</div>
+      <div style="flex:1;"></div>
+      <div class="docs-sb-divider"></div>
+      <div class="docs-shortcut">⛽ Fuel Estimates &nbsp;?</div>
+      <div style="font-size:10px;color:var(--text3);padding:2px 10px;">Ganga Nagar Market</div>
+      <div class="docs-shortcut">📦 Distribution Calc</div>
+      <div style="font-size:10px;color:var(--text3);padding:2px 10px;">Hope School, Yesterday</div>
+      <div class="docs-sb-divider"></div>
+      <div class="back-btn-sb" onclick="navigate('home')">‹ Back</div>
+    </div>
+    <!-- Main content -->
+    <div class="docs-main">
+      <div class="docs-page-title">
+        <div class="docs-title-icon">📂</div>
+        <div>
+          <h1>Documents &amp; File Manager</h1>
+          <div class="sub">Access equipment manuals, checklists, and more.</div>
+        </div>
+      </div>
+
+      <div class="docs-desc-card">
+        The app also includes a <strong>DOCUMENT AND FILE MANAGER</strong> for accessing pre-loaded equipment manuals, standard operating procedures, and editable checklists, along with <u>LOCAL FILE SHARING</u> between devices over hotspot. A built-in <strong>OFFLINE TRANSLATION MODULE</strong> with pre-downloaded language packs ensures that multi-language emergency teams can communicate effectively.
+      </div>
+
+      <div class="key-features-title">Key Features</div>
+
+      <div class="docs-feat-row">
+        <div class="docs-feat-card" onclick="showModal('docMgrModal')">
+          <div class="dfc-img" style="background:rgba(0,100,200,0.15);border:1px solid rgba(0,160,255,0.2);">📁</div>
+          <div class="dfc-title">Document &amp; File Manager</div>
+          <div class="dfc-desc">Access manuals, SOPs, and checklists.</div>
+        </div>
+        <div class="docs-feat-card" onclick="showModal('shareMgrModal')">
+          <div class="dfc-img" style="background:rgba(0,180,255,0.12);border:1px solid rgba(0,220,255,0.2);">📡</div>
+          <div class="dfc-title">Local File Sharing</div>
+          <div class="dfc-desc">Share files between devices over Wi-Fi hotspot.</div>
+        </div>
+        <div class="docs-feat-card" onclick="showModal('transModal')">
+          <div class="dfc-img" style="background:rgba(244,162,50,0.1);border:1px solid rgba(244,162,50,0.2);">🌐</div>
+          <div class="dfc-title">Offline Translation</div>
+          <div class="dfc-desc">Translate content offline with pre-downloaded languages.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="docs-back-btn" onclick="navigate('home')">‹ Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================
+     MODALS
+============================================= -->
+<div class="modal-overlay" id="addLocModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>📍 Add Location</h3>
+    <p>Enter a location name and type to pin it to the offline map for your team.</p>
+    <input class="ai-input" placeholder="Location name…" style="width:100%;margin-bottom:10px;">
+    <select class="ai-input" style="width:100%;margin-bottom:14px;">
+      <option>Safe Zone</option><option>Danger Zone</option><option>Pinned Location</option>
+    </select>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('addLocModal'))">Cancel</button><button class="btn btn-green btn-sm">Add</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="szModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>🛡️ Mark Safe Zone</h3>
+    <p>Tap on the map or enter coordinates to mark this area as a Safe Zone for all connected devices.</p>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('szModal'))">Cancel</button><button class="btn btn-green btn-sm">Mark Safe Zone</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dzModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>⚠️ Mark Danger Zone</h3>
+    <p>Tap on the map or enter coordinates to mark this area as a Danger Zone and alert all connected devices.</p>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('dzModal'))">Cancel</button><button class="btn btn-orange btn-sm">Mark Danger Zone</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="routeModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>📍 Plan Route</h3>
+    <p>Select start and destination points to plan a safe evacuation route using offline map data.</p>
+    <input class="ai-input" placeholder="Start location…" style="width:100%;margin-bottom:8px;">
+    <input class="ai-input" placeholder="Destination…" style="width:100%;margin-bottom:14px;">
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('routeModal'))">Cancel</button><button class="btn btn-orange btn-sm">Plan Route</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="updateModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>☁️ Update Maps</h3>
+    <p>Download the latest offline map data for your area. Requires a brief internet connection. Current data: 15 MB — last updated: just now.</p>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('updateModal'))">Cancel</button><button class="btn btn-green btn-sm">Download Update</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="noteModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>✏️ Take New Note</h3>
+    <p>Notes are saved locally and shared with your connected team over the mesh network.</p>
+    <textarea class="ai-input" style="width:100%;height:80px;resize:none;margin-bottom:14px;" placeholder="Write your note…"></textarea>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('noteModal'))">Cancel</button><button class="btn btn-green btn-sm">Save Note</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="docMgrModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>📁 Document &amp; File Manager</h3>
+    <p>Access pre-loaded equipment manuals, standard operating procedures, and editable checklists — no internet required. Files available: Generator Manual v3.2, Fire SOP, Medical Kit Checklist, Evacuation Route Alpha.</p>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('docMgrModal'))">Close</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="shareMgrModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>📡 Local File Sharing</h3>
+    <p>Share documents between devices over a local Wi-Fi hotspot without internet. 4 devices currently visible on the network: Node-7, Node-12, Node-3, Node-19.</p>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('shareMgrModal'))">Close</button><button class="btn btn-green btn-sm">Share File</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="transModal" onclick="closeModal(event,this)">
+  <div class="modal">
+    <h3>🌐 Offline Translation</h3>
+    <p>Pre-downloaded language packs: Hindi (82 MB ✓), English (74 MB ✓), Tamil (68 MB ✓), Bengali (65 MB ✓). Arabic and French available for download.</p>
+    <textarea class="ai-input" style="width:100%;height:60px;resize:none;margin-bottom:8px;" placeholder="Enter text to translate…"></textarea>
+    <div class="modal-btns"><button class="btn btn-cyan btn-sm" onclick="closeModal(null,document.getElementById('transModal'))">Close</button><button class="btn btn-orange btn-sm">Translate</button></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
